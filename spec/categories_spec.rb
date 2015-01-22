@@ -51,10 +51,10 @@ describe(Category) do
       test_category.save()
       test_expense = Expense.new({ :name => "coffee", :cost => 2.50, :date => "2015-01-22" })
       test_expense.save()
-      test_expense.assign_category(test_category)
+      test_expense.assign_category({ :category => test_category })
       test_expense2 = Expense.new({ :name => "cheeseburger", :cost => 4, :date => "2015-01-21"})
       test_expense2.save()
-      test_expense2.assign_category(test_category)
+      test_expense2.assign_category({ :category => test_category })
       expect(test_category.expenses()).to(eq([test_expense, test_expense2]))
     end
   end
@@ -65,10 +65,10 @@ describe(Category) do
       test_category.save()
       test_expense = Expense.new({ :name => "coffee", :cost => 2.50, :date => "2015-01-22" })
       test_expense.save()
-      test_expense.assign_category(test_category)
+      test_expense.assign_category({ :category => test_category })
       test_expense2 = Expense.new({ :name => "cheeseburger", :cost => 4, :date => "2015-01-21"})
       test_expense2.save()
-      test_expense2.assign_category(test_category)
+      test_expense2.assign_category({ :category => test_category })
       expect(test_category.total_cost()).to(eq(6.5))
     end
   end
@@ -79,11 +79,24 @@ describe(Category) do
       test_category.save()
       test_expense = Expense.new({ :name => "coffee", :cost => 3.00, :date => "2015-01-22" })
       test_expense.save()
-      test_expense.assign_category(test_category)
+      test_expense.assign_category({ :category => test_category })
       test_expense2 = Expense.new({ :name => "cheeseburger", :cost => 1.00, :date => "2015-01-21"})
       test_expense2.save()
       expect(test_category.percent_total()).to(eq(0.75))
     end
+    it('returns a correct percentage reflecting partial categorization') do
+      test_category = Category.new({ :name => "food"})
+      test_category.save()
+      test_expense = Expense.new({ :name => "coffee", :cost => 3.00, :date => "2015-01-22" })
+      test_expense.save()
+      test_expense.assign_category({ :category => test_category, :percent => 0.5 })
+      test_expense2 = Expense.new({ :name => "cheeseburger", :cost => 1.00, :date => "2015-01-21"})
+      test_expense2.save()
+      test_expense2.assign_category({ :category => test_category, :percent => 0.5 })
+      expect(test_category.percent_total()).to(eq(0.5))
+    end
   end
+
+
 
 end

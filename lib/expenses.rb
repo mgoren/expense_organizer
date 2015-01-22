@@ -49,8 +49,13 @@ class Expense
     DB.exec("DELETE FROM expenses WHERE id = #{self.id()};")
   end
 
-  define_method(:assign_category) do |category|
-    DB.exec("INSERT INTO categories_expenses (category_id, expense_id) VALUES (#{category.id()}, #{self.id()});")
+  define_method(:assign_category) do |attributes|
+    category = attributes.fetch(:category)
+    percent = attributes[:percent]
+    if ! percent
+      percent = 1.0
+    end
+    DB.exec("INSERT INTO categories_expenses (category_id, expense_id, percent) VALUES (#{category.id()}, #{self.id()}, #{percent});")
   end
 
   define_method(:categories) do
@@ -62,6 +67,11 @@ class Expense
       categories.push(Category.new({ :name => name, :id => id }))
     end
     categories
+  end
+
+  define_method(:category_share) do |category|
+    returned_percent = DB.exec("SELECT percent FROM categories_expenses WHERE category_id = #{category.id()} AND expense_id = #{self.id()};")
+    percent = returned_percent.first().fetch('percent').to_f()
   end
 
 

@@ -53,7 +53,7 @@ class Category
   define_method(:total_cost) do
     total_cost = 0.0
     self.expenses().each() do |expense|
-      total_cost += expense.cost()
+      total_cost += expense.cost() * expense.category_share(self)
     end
     total_cost
   end

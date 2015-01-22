@@ -61,11 +61,21 @@ describe(Expense) do
       test_expense.save()
       test_category = Category.new({ :name => "food"})
       test_category.save()
-      test_expense.assign_category(test_category)
+      test_expense.assign_category({ :category => test_category })
       expect(test_expense.categories()).to(eq([test_category]))
     end
   end
 
+  describe('#category_share') do
+    it("returns what percent of this expense object is assigned to a given category") do
+      test_expense = Expense.new({ :name => "coffee", :cost => 2.50, :date => "2015-01-22" })
+      test_expense.save()
+      test_category = Category.new({ :name => "food"})
+      test_category.save()
+      test_expense.assign_category({ :category => test_category, :percent => 0.5 })
+      expect(test_expense.category_share(test_category)).to(eq(0.5))
+    end
+  end
 
 
 

@@ -72,5 +72,4 @@ class Category
     end
     company_total / self.total_cost()
   end
-
 end

@@ -45,7 +45,8 @@ class Category
       name = expense_hash.fetch('name')
       cost = expense_hash.fetch('cost').to_f()
       date = expense_hash.fetch('date')
-      expenses.push(Expense.new({ :id => id, :name => name, :cost => cost, :date => date }))
+      company_id = expense_hash.fetch('company_id').to_i()
+      expenses.push(Expense.new({ :id => id, :name => name, :cost => cost, :date => date, :company_id => company_id }))
     end
     expenses
   end
@@ -60,6 +61,16 @@ class Category
 
   define_method(:percent_total) do
     self.total_cost() / Expense.total_cost()
+  end
+
+  define_method(:company_share) do |company|
+    company_total = 0.0
+    self.expenses().each() do |expense|
+      if expense.company_id() == company.id()
+        company_total += expense.cost() * expense.category_share(self)
+      end
+    end
+    company_total / self.total_cost()
   end
 
 end

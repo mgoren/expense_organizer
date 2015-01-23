@@ -97,6 +97,36 @@ describe(Category) do
     end
   end
 
-
-
+  describe('#company_share') do
+    it("what share of this category went to this company") do
+      test_company = Company.new({ :name => "Voodoo" })
+      test_company.save()
+      test_company2 = Company.new({ :name => "Blue Star" })
+      test_company2.save()
+      test_category = Category.new({ :name => "food"})
+      test_category.save()
+      test_expense = Expense.new({ :name => "donut", :cost => 4.0, :date => "2015-01-22", :company_id => test_company.id() })
+      test_expense.save()
+      test_expense2 = Expense.new({ :name => "maple bar", :cost => 4.0, :date => "2015-01-21", :company_id => test_company2.id() })
+      test_expense2.save()
+      test_expense.assign_category({:category => test_category})
+      test_expense2.assign_category({:category => test_category})
+      expect(test_category.company_share(test_company)).to(eq(0.50))
+    end
+    it("what share of this category went to this company") do
+      test_company = Company.new({ :name => "Voodoo" })
+      test_company.save()
+      test_company2 = Company.new({ :name => "Blue Star" })
+      test_company2.save()
+      test_category = Category.new({ :name => "food"})
+      test_category.save()
+      test_expense = Expense.new({ :name => "donut", :cost => 4.0, :date => "2015-01-22", :company_id => test_company.id() })
+      test_expense.save()
+      test_expense2 = Expense.new({ :name => "maple bar", :cost => 2.0, :date => "2015-01-21", :company_id => test_company2.id() })
+      test_expense2.save()
+      test_expense.assign_category({:category => test_category, :percent => 0.5 })
+      test_expense2.assign_category({:category => test_category})
+      expect(test_category.company_share(test_company)).to(eq(0.50))
+    end
+  end
 end

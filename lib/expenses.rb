@@ -1,11 +1,12 @@
 class Expense
 
-  attr_reader(:name, :cost, :date, :id)
+  attr_reader(:name, :cost, :date, :id, :company_id)
 
   define_method(:initialize) do |attributes|
     @name = attributes.fetch(:name)
     @cost = attributes.fetch(:cost)
     @date = attributes.fetch(:date)
+    @company_id = attributes[:company_id] || "NULL"
     @id = attributes[:id]
   end
 
@@ -29,19 +30,23 @@ class Expense
       cost = expense.fetch("cost").to_f()
       date = expense.fetch("date")
       id = expense.fetch("id").to_i()
-      expenses.push(Expense.new({ :name => name, :cost => cost, :date => date, :id => id }))
+      company_id = expense.fetch("company_id").to_i()
+      expenses.push(Expense.new({ :name => name, :cost => cost, :date => date, :company_id => company_id, :id => id }))
     end
     expenses
   end
 
   define_method(:save) do
-    result = DB.exec("INSERT INTO expenses (name, cost, date) VALUES ('#{@name}', #{@cost}, '#{@date}') RETURNING id;")
+    result = DB.exec("INSERT INTO expenses (name, cost, date, company_id) VALUES ('#{@name}', #{@cost}, '#{@date}', #{@company_id}) RETURNING id;")
     @id = result.first().fetch('id').to_i()
   end
 
   define_method(:update) do |attributes|
-    @name = attributes.fetch(:name)
-    DB.exec("UPDATE expenses SET name = '#{@name}' WHERE id = #{self.id()};")
+    @name = attributes[:name] || @name
+    @company_id = attributes[:company_id] || @company_id
+    @date = attributes[:date] || @date
+    @cost = attributes[:cost] || @cost
+    DB.exec("UPDATE expenses SET name = '#{@name}', company_id = #{company_id}, date = '#{date}', cost = #{cost} WHERE id = #{self.id()};")
   end
 
   define_method(:delete) do
@@ -74,5 +79,8 @@ class Expense
     percent = returned_percent.first().fetch('percent').to_f()
   end
 
+  define_method(:company) do
+    Company.find(@company_id)
+  end
 
 end

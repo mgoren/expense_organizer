@@ -42,6 +42,17 @@ describe(Expense) do
       test_expense.update({:name => "cheeseburger"})
       expect(test_expense.name()).to(eq("cheeseburger"))
     end
+    it("will update the company_id and date of a expense") do
+      test_company = Company.new({:name => "Haliburton"})
+      test_company2 = Company.new({:name => "Exxon"})
+      test_company.save()
+      test_company2.save()
+      test_expense = Expense.new({ :name => "coffee", :cost => 2.50, :date => "2015-01-22", :company_id => test_company.id() })
+      test_expense.save()
+      test_expense.update({:date => "1987-09-23", :company_id => test_company2.id() })
+      expect(test_expense.company_id()).to(eq(test_company2.id()))
+      expect(test_expense.date()).to(eq("1987-09-23"))
+    end
   end
 
   describe("#delete") do
@@ -76,6 +87,17 @@ describe(Expense) do
       expect(test_expense.category_share(test_category)).to(eq(0.5))
     end
   end
+
+  describe('#company') do
+    it("returns company object associated with this expense") do
+      test_company = Company.new({:name => "Dr Bronners"})
+      test_company.save()
+      test_expense = Expense.new({ :name => "coffee", :cost => 2.50, :date => "2015-01-22", :company_id => test_company.id() })
+      test_expense.save()
+      expect(test_expense.company()).to(eq(test_company))
+    end
+  end
+
 
 
 
